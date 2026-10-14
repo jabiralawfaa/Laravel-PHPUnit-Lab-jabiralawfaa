@@ -1,0 +1,107 @@
+LAMPIRAN 01 — Hasil php artisan test (Unit, Feature, Total)
+Proyek   : laravel-phpunit-lab
+Mesin    : PHP 8.5.7 (cli), Windows
+Waktu    : 14-Oct-2026 10:12:14
+Catatan  : keluaran asli terminal; hanya warna ANSI dihapus.
+
+===== php artisan test --testsuite=Unit =====
+
+   PASS  Tests\Unit\CheckoutServiceTest
+  ✓ hasil checkout dengan dependensi asli
+  ✓ mock mengisolasi dependensi
+  ✓ harga nol ditolak
+  ✓ jumlah nol ditolak
+
+   PASS  Tests\Unit\DiskonServiceTest
+  ✓ semua kombinasi jalur with data set " p1 nonmember rendah"                                                   0.02s  
+  ✓ semua kombinasi jalur with data set " p2 member rendah"
+  ✓ semua kombinasi jalur with data set " p3 nonmember tinggi"
+  ✓ semua kombinasi jalur with data set " p4 member tinggi"
+  ✓ batas 499999 belum memperoleh diskon nominal
+  ✓ batas 500000 sudah memperoleh diskon nominal
+
+   PASS  Tests\Unit\OngkirServiceTest
+  ✓ ongkir with data set "reguler berbayar"                                                                      0.01s  
+  ✓ ongkir with data set "reguler gratis"
+  ✓ ongkir with data set "ekspres berbayar"
+  ✓ ongkir with data set "ekspres gratis reguler"
+
+  Tests:    14 passed (27 assertions)
+  Duration: 0.73s
+
+===== php artisan test --testsuite=Feature =====
+
+   PASS  Tests\Feature\CheckoutApiTest
+  ✓ halaman checkout dapat dibuka                                                                                0.48s  
+  ✓ endpoint api checkout sukses                                                                                 0.05s  
+  ✓ validasi harga tidak valid menghasilkan 422                                                                  0.04s  
+  ✓ validasi jumlah kosong menghasilkan 422                                                                      0.03s  
+
+   PASS  Tests\Feature\CheckoutOrderApiTest
+  ✓ api orders menyimpan hasil checkout yang dihitung server                                                     0.28s  
+  ✓ api checkout lama tidak menyimpan database                                                                   0.03s  
+  ✓ input tidak valid tidak menghasilkan record                                                                  0.03s  
+  ✓ api dapat mengambil pesanan yang disimpan                                                                    0.07s  
+  ✓ id pesanan tidak ditemukan menghasilkan 404                                                                  0.03s  
+  ✓ factory bisa membuat data valid                                                                              0.03s  
+  ✓ seeder membuat dua belas pesanan                                                                             0.04s  
+
+   PASS  Tests\Feature\CheckoutOrderWebTest
+  ✓ tombol simpan pesanan menyimpan database dan redirect                                                        0.04s  
+  ✓ halaman riwayat menampilkan record database                                                                  0.04s  
+  ✓ invalid web request tidak menyimpan pesanan                                                                  0.03s  
+
+   PASS  Tests\Feature\MigrationSchemaTest
+  ✓ migration checkout orders membuat tabel dan kolom penting                                                    0.03s  
+
+  Tests:    15 passed (52 assertions)
+  Duration: 1.94s
+
+===== php artisan test (Unit + Feature / total keseluruhan) =====
+
+   PASS  Tests\Unit\CheckoutServiceTest
+  ✓ hasil checkout dengan dependensi asli
+  ✓ mock mengisolasi dependensi
+  ✓ harga nol ditolak
+  ✓ jumlah nol ditolak
+
+   PASS  Tests\Unit\DiskonServiceTest
+  ✓ semua kombinasi jalur with data set " p1 nonmember rendah"                                                   0.02s  
+  ✓ semua kombinasi jalur with data set " p2 member rendah"
+  ✓ semua kombinasi jalur with data set " p3 nonmember tinggi"
+  ✓ semua kombinasi jalur with data set " p4 member tinggi"
+  ✓ batas 499999 belum memperoleh diskon nominal
+  ✓ batas 500000 sudah memperoleh diskon nominal
+
+   PASS  Tests\Unit\OngkirServiceTest
+  ✓ ongkir with data set "reguler berbayar"                                                                      0.01s  
+  ✓ ongkir with data set "reguler gratis"
+  ✓ ongkir with data set "ekspres berbayar"
+  ✓ ongkir with data set "ekspres gratis reguler"
+
+   PASS  Tests\Feature\CheckoutApiTest
+  ✓ halaman checkout dapat dibuka                                                                                0.53s  
+  ✓ endpoint api checkout sukses                                                                                 0.11s  
+  ✓ validasi harga tidak valid menghasilkan 422                                                                  0.05s  
+  ✓ validasi jumlah kosong menghasilkan 422                                                                      0.05s  
+
+   PASS  Tests\Feature\CheckoutOrderApiTest
+  ✓ api orders menyimpan hasil checkout yang dihitung server                                                     0.29s  
+  ✓ api checkout lama tidak menyimpan database                                                                   0.03s  
+  ✓ input tidak valid tidak menghasilkan record                                                                  0.03s  
+  ✓ api dapat mengambil pesanan yang disimpan                                                                    0.07s  
+  ✓ id pesanan tidak ditemukan menghasilkan 404                                                                  0.03s  
+  ✓ factory bisa membuat data valid                                                                              0.03s  
+  ✓ seeder membuat dua belas pesanan                                                                             0.04s  
+
+   PASS  Tests\Feature\CheckoutOrderWebTest
+  ✓ tombol simpan pesanan menyimpan database dan redirect                                                        0.04s  
+  ✓ halaman riwayat menampilkan record database                                                                  0.05s  
+  ✓ invalid web request tidak menyimpan pesanan                                                                  0.03s  
+
+   PASS  Tests\Feature\MigrationSchemaTest
+  ✓ migration checkout orders membuat tabel dan kolom penting                                                    0.03s  
+
+  Tests:    29 passed (79 assertions)
+  Duration: 2.19s
+

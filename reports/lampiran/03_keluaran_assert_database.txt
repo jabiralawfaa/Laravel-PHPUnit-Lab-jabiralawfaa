@@ -1,0 +1,84 @@
+LAMPIRAN 03 — Keluaran assertion database (assertDatabaseHas / assertDatabaseCount)
+Proyek   : laravel-phpunit-lab
+Mesin    : PHP 8.5.7 (cli), Windows ; SQLite :memory: (phpunit.xml)
+Waktu    : 14-Oct-2026 10:13:19
+Catatan  : keluaran asli `php artisan test --filter=CheckoutOrderApiTest --testdox` (warna ANSI dihapus).
+           Ketujuh test di bawah (yang memuat assertion database: 5 di antaranya) PASS pada run ini.
+
+===== php artisan test --filter=CheckoutOrderApiTest --testdox =====
+PHPUnit 12.5.39 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.7
+Configuration: D:\tugas\laravel-phpunit-lab\phpunit.xml
+
+
+   PASS  Tests\Feature\CheckoutOrderApiTest
+  ✓ api orders menyimpan hasil checkout yang dihitung server                                                     0.81s  
+  ✓ api checkout lama tidak menyimpan database                                                                   0.03s  
+  ✓ input tidak valid tidak menghasilkan record                                                                  0.04s  
+  ✓ api dapat mengambil pesanan yang disimpan                                                                    0.07s  
+  ✓ id pesanan tidak ditemukan menghasilkan 404                                                                  0.03s  
+  ✓ factory bisa membuat data valid                                                                              0.03s  
+  ✓ seeder membuat dua belas pesanan                                                                             0.05s  
+
+  Tests:    7 passed (25 assertions)
+  Duration: 1.80s
+
+Time: 00:01.074, Memory: 50.00 MB
+
+Checkout Order Api (Tests\Feature\CheckoutOrderApi)
+ ✔ Api orders menyimpan hasil checkout yang dihitung server
+ ✔ Api checkout lama tidak menyimpan database
+ ✔ Input tidak valid tidak menghasilkan record
+ ✔ Api dapat mengambil pesanan yang disimpan
+ ✔ Id pesanan tidak ditemukan menghasilkan 404
+ ✔ Factory bisa membuat data valid
+ ✔ Seeder membuat dua belas pesanan
+
+OK (7 tests, 25 assertions)
+
+===== Cuplikan sumber — tests/Feature/CheckoutOrderApiTest.php (bagian assertion) =====
+public function test_api_orders_menyimpan_hasil_checkout_yang_dihitung_server(): void
+{
+    // ... postJson('/api/orders', [...])->assertCreated() dan cek payload JSON ...
+    $this->assertDatabaseCount('checkout_orders', 1);
+    $this->assertDatabaseHas('checkout_orders', [
+        'harga' => 300000,
+        'jumlah' => 2,
+        'subtotal' => 600000,
+        'potongan_diskon' => 90000,
+        'total' => 510000,
+    ]);
+}
+
+public function test_api_checkout_lama_tidak_menyimpan_database(): void
+{
+    // ... postJson('/api/checkout', [...])->assertOk() ...
+    $this->assertDatabaseCount('checkout_orders', 0);
+}
+
+public function test_input_tidak_valid_tidak_menghasilkan_record(): void
+{
+    // ... postJson('/api/orders', ['harga' => 0, 'jumlah' => 2])
+    //     ->assertUnprocessable()->assertJsonValidationErrors(['harga']) ...
+    $this->assertDatabaseCount('checkout_orders', 0);
+}
+
+public function test_factory_bisa_membuat_data_valid(): void
+{
+    CheckoutOrder::factory()->count(3)->create();
+    $this->assertDatabaseCount('checkout_orders', 3);
+    // ... assert total >= 0 pada seluruh record ...
+}
+
+public function test_seeder_membuat_dua_belas_pesanan(): void
+{
+    $this->seed();
+    $this->assertDatabaseCount('checkout_orders', 12);
+}
+
+===== Interpretasi singkat ====
+- assertDatabaseCount() memeriksa JUMLAH record saat test berjalan.
+- assertDatabaseHas() memeriksa adanya sedikitnya satu record dengan pasangan kolom/nilai tertentu.
+- Pada test 422 (harga=0), count=0 membuktikan request ditolak validasi SEBELUM controller
+  menyimpan apa pun — jaminan "tidak ada data tersimpan" terekspresi sebagai assertion, bukan asumsi.

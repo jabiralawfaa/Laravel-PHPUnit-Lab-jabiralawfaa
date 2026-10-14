@@ -1,0 +1,15 @@
+/.env
+/vendor
+/node_modules
+/.phpunit.cache
+/.phpunit.result.cache
+/build/coverage
+/storage/*.key
+/storage/logs/*.log
+/bootstrap/cache/*.php
+.DS_Store
+
+# Database SQLite temporer hasil tes atau development
+/database/*.sqlite-shm
+/database/*.sqlite-wal
+/database/*.sqlite-journal

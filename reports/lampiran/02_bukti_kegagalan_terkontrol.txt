@@ -1,0 +1,72 @@
+LAMPIRAN 02 — Bukti kegagalan terkontrol akibat perubahan kode, lalu bukti setelah diperbaiki
+Proyek   : laravel-phpunit-lab
+Objek    : app/Services/DiskonService.php — method persentase(), kondisi if ($subtotal >= 500000)
+Sesi     : 14-Oct-2026, eksperimen terkontrol sesuai modul (PRAKTIKUM 1 langkah 1.4 butir 3 dan D.5 butir 3)
+Catatan  : transkrip keluaran terminal asli dari sesi eksperimen (warna ANSI dihapus).
+           Kode proyek saat ini KONDISI ASLI — hash pasca-pemulihan identik dengan hash awal.
+
+================================================================
+BAGIAN A — Kondisi sebelum mutasi (baseline)
+================================================================
+Hash awal file (SHA256):
+6D9AFDDC3B6BD81F39FFF85A9FF5F9058BB4C086B96F51916E7240BC87B38688
+
+Baris yang dimutasi (sebelum):
+    if ($subtotal >= 500000) {
+
+================================================================
+BAGIAN B — Mutasi diterapkan (sengaja merusak logika batas)
+================================================================
+Baris sesudah mutasi (sementara):
+    if ($subtotal > 500000) {
+
+Perintah: php artisan test --filter=DiskonServiceTest
+
+----- Hasil eksekusi DENGAN mutasi (1 FAILED, 5 passed) -----
+ FAIL  Tests\Unit\DiskonServiceTest
+  ✓ semua kombinasi jalur with data set " p1 nonmember rendah"
+  ✓ semua kombinasi jalur with data set " p2 member rendah"
+  ✓ semua kombinasi jalur with data set " p3 nonmember tinggi"
+  ✓ semua kombinasi jalur with data set " p4 member tinggi"
+  ✓ batas 499999 belum memperoleh diskon nominal
+  ⨯ batas 500000 sudah memperoleh diskon nominal                        0.14s
+
+  FAILED  Tests\Unit\DiskonServiceTest > batas 500000 sudah memperoleh diskon nominal
+  Failed asserting that 0 is identical to 5.
+
+  at tests\Unit\DiskonServiceTest.php:40
+     38▕     public function test_batas_500000_sudah_memperoleh_diskon_nominal(): void
+     39▕     {
+  ➜  40▕         self::assertSame(5, (new DiskonService())->persentase(false, 500000));
+     41▕     }
+
+Tests:    1 failed, 5 passed (6 assertions)
+
+----- Interpretasi -----
+- Input        : member=false, subtotal=500000 (tepat pada batas)
+- Expected     : 5 (persentase diskon)
+- Aktual       : 0
+- Akar masalah : off-by-one — operator > membuat ambang 500.000 tidak lagi inklusif,
+                 sehingga subtotal tepat 500.000 tidak memperoleh diskon 5%.
+- Temuan penting : jalur P1-P4 (subtotal 100.000 / 600.000) TETAP PASS saat mutasi —
+                 hanya test boundary yang menangkap kesalahan ini. (Lihat Lampiran 04.)
+
+================================================================
+BAGIAN C — Kode dipulihkan ke kondisi awal
+================================================================
+Kode dikembalikan menjadi:
+    if ($subtotal >= 500000) {
+
+Hash sesudah pemulihan (SHA256):
+6D9AFDDC3B6BD81F39FFF85A9FF5F9058BB4C086B96F51916E7240BC87B38688
+=> IDENTIK dengan hash awal (file byte-identik, bukan sekadar mirip).
+
+----- Hasil eksekusi SESUDAH pemulihan -----
+php artisan test --filter=DiskonServiceTest
+Tests:    6 passed (6 assertions)
+
+php artisan test (keseluruhan, sesi pemulihan)
+Tests:    29 passed (79 assertions)
+
+Kesimpulan: kegagalan terkontrol berhasil dibuktikan, akar masalah dianalisis,
+kode dipulihkan persis, dan seluruh suite kembali hijau.
